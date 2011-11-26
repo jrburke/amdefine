@@ -65,7 +65,7 @@ function makeNormalize(relName) {
     };
 }
 
-function stringRequire(require, exports, module, id) {
+function stringRequire(module, id) {
     //Split the ID by a ! so that
     var index = id.indexOf('!'),
         relId = module.id,
@@ -75,13 +75,13 @@ function stringRequire(require, exports, module, id) {
         //Straight module lookup. If it is one of the special dependencies,
         //deal with it, otherwise, delegate to node.
         if (id === 'require') {
-            return makeRequire(require, exports, module);
+            return makeRequire(module);
         } else if (id === 'exports') {
-            return exports;
+            return module.exports;
         } else if (id === 'module') {
             return module;
         } else {
-            return require(id);
+            return module.require(id);
         }
     } else {
         //There is a plugin in play.
@@ -100,7 +100,7 @@ function stringRequire(require, exports, module, id) {
         if (loaderCache[id]) {
             return loaderCache[id];
         } else {
-            plugin.load(id, makeRequire(require), function (value) {
+            plugin.load(id, makeRequire(module), function (value) {
                 loaderCache[id] = value;
             }, {});
 
@@ -109,17 +109,17 @@ function stringRequire(require, exports, module, id) {
     }
 }
 
-makeRequire = function (require, exports, module) {
+makeRequire = function (module) {
     return function (deps, callback) {
         if (typeof deps === 'string') {
             //Synchronous, single module require('')
-            return stringRequire(require, exports, module, deps);
+            return stringRequire(module, deps);
         } else {
             //Array of dependencies with a callback.
 
             //Convert the dependencies to modules.
             deps = deps.map(function (depName) {
-                return stringRequire(require, exports, module, depName);
+                return stringRequire(module, depName);
             });
 
             //Wait for next tick to call back the require call.
@@ -134,19 +134,10 @@ makeRequire = function (require, exports, module) {
 };
 
 function amdefine(module) {
-
-console.log('amdefine called for module: ' + module.id);
-
-//debugger;
-    var require = module.require,
-        exports = module.exports,
-        alreadyCalled = false;
+    var alreadyCalled = false;
 
     //Create a define function specific to the module asking for amdefine.
     function define() {
-
-console.log('define called for module: ' + module.id);
-//debugger;
 
         var args = arguments,
             factory = args[args.length - 1],
@@ -154,10 +145,10 @@ console.log('define called for module: ' + module.id);
             deps, result;
 
         //Only support one define call per file
-        //if (alreadyCalled) {
-        //    throw new Error('amdefine cannot be called more than once per file.');
-        //}
-        //alreadyCalled = true;
+        if (alreadyCalled) {
+            throw new Error('amdefine cannot be called more than once per file.');
+        }
+        alreadyCalled = true;
 
         //Grab array of dependencies if it is there.
         if (args.length > 1) {
@@ -172,11 +163,11 @@ console.log('define called for module: ' + module.id);
         //to convert them to dependency values.
         if (deps) {
             deps = deps.map(function (depName) {
-                return stringRequire(require, exports, module, depName);
+                return stringRequire(module, depName);
             });
         } else if (isFactoryFunction) {
             //Pass in the standard require, exports, module
-            deps = [makeRequire(require, exports, module), exports, module];
+            deps = [makeRequire(module), module.exports, module];
         }
 
         if (!isFactoryFunction) {
@@ -184,7 +175,7 @@ console.log('define called for module: ' + module.id);
             module.exports = factory;
         } else {
             //Call the factory with the right dependencies.
-            result = factory.apply(exports, deps);
+            result = factory.apply(module.exports, deps);
 
             if (result !== undefined) {
                 module.exports = result;
