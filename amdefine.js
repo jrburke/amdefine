@@ -1,9 +1,14 @@
 
 /*jslint strict: false, nomen: false, plusplus: false */
-/*global require, module, process */
+/*global module, process, require: true */
 
-var loaderCache = {},
+var path = require('path'),
+    loaderCache = {},
     makeRequire;
+
+// Null out require for this file so that it is not accidentally used
+// below, where module.require should be used instead.
+require = null;
 
 /**
  * Given a relative module name, like ./something, normalize it to
@@ -14,53 +19,12 @@ var loaderCache = {},
  * @returns {String} normalized name
  */
 function normalize(name, baseName) {
-    //Adjust any relative paths.
-    if (name && name.charAt(0) === ".") {
-        //If have a base name, try to normalize against it,
-        //otherwise, assume it is a top-level require that will
-        //be relative to baseUrl in the end.
-        if (baseName) {
-            //Convert baseName to array, and lop off the last part,
-            //so that . matches that "directory" and not name of the baseName's
-            //module. For instance, baseName of "one/two/three", maps to
-            //"one/two/three.js", but we want the directory, "one/two" for
-            //this normalization.
-            baseName = baseName.split("/");
-            baseName = baseName.slice(0, baseName.length - 1);
-
-            name = baseName.concat(name.split("/"));
-
-            //start trimDots
-            var i, part;
-            for (i = 0; (part = name[i]); i++) {
-                if (part === ".") {
-                    name.splice(i, 1);
-                    i -= 1;
-                } else if (part === "..") {
-                    if (i === 1 && (name[2] === '..' || name[0] === '..')) {
-                        //End of the line. Keep at least one non-dot
-                        //path segment at the front so it can be mapped
-                        //correctly to disk. Otherwise, there is likely
-                        //no path mapping for a path starting with '..'.
-                        //This can still fail, but catches the most reasonable
-                        //uses of ..
-                        break;
-                    } else if (i > 0) {
-                        name.splice(i - 1, 2);
-                        i -= 2;
-                    }
-                }
-            }
-            //end trimDots
-
-            name = name.join("/");
-        }
-    }
-    return name;
+    return path.normalize(path.join(baseName, name));
 }
 
 function makeNormalize(relName) {
     return function (name) {
+debugger;
         return normalize(name, relName);
     };
 }
@@ -68,7 +32,7 @@ function makeNormalize(relName) {
 function stringRequire(module, id) {
     //Split the ID by a ! so that
     var index = id.indexOf('!'),
-        relId = module.id,
+        relId = path.dirname(module.filename),
         prefix, plugin;
 
     if (index === -1) {
@@ -86,9 +50,9 @@ function stringRequire(module, id) {
     } else {
         //There is a plugin in play.
         prefix = id.substring(0, index);
-        id = id.substring(index, id.length);
+        id = id.substring(index + 1, id.length);
 
-        plugin = require(prefix);
+        plugin = module.require(prefix);
 
         if (plugin.normalize) {
             id = plugin.normalize(id, makeNormalize(relId));
@@ -110,7 +74,7 @@ function stringRequire(module, id) {
 }
 
 makeRequire = function (module) {
-    return function (deps, callback) {
+    function amdRequire(deps, callback) {
         if (typeof deps === 'string') {
             //Synchronous, single module require('')
             return stringRequire(module, deps);
@@ -130,7 +94,17 @@ makeRequire = function (module) {
             //Keeps strict checking in komodo happy.
             return undefined;
         }
+    }
+
+    amdRequire.toUrl = function (filePath) {
+        if (filePath.indexOf('.') === 0) {
+            return normalize(filePath, path.dirname(module.filename));
+        } else {
+            return filePath;
+        }
     };
+
+    return amdRequire;
 };
 
 function amdefine(module) {
