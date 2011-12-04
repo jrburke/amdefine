@@ -24,7 +24,6 @@ function normalize(name, baseName) {
 
 function makeNormalize(relName) {
     return function (name) {
-debugger;
         return normalize(name, relName);
     };
 }
