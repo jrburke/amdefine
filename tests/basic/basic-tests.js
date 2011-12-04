@@ -8,6 +8,7 @@ doh.register(
             t.is('b', a.b.name);
             t.is('d', a.d.name);
             t.is('c', a.d.cName);
+            t.is('e', a.d.e.name);
         }
     ]
 );

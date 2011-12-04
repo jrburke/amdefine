@@ -27,6 +27,8 @@ load('doh/_' + env + 'Runner.js');
 
 require("./basic/basic-tests");
 require("./plugins/relative/relative-tests");
+//require("./plugins/coffeescript/coffeescript-tests");
+require("./require/require-tests");
 
 //Print out the final report
 doh.run();

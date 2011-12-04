@@ -1,11 +1,16 @@
+# amdefine
+
+A module that can be used to implement AMD's define() in Node.
+
+More explanation here...
+
+Run sync, except require([], function() {}) where callback is triggered on nextTick
 
 
-module.id is a path, need to adjust normalization, just use path normalization?
 
-## Test
 
-* require.toUrl
-* ask for require, exports, module but return a value.
-* ask for require, exports, module, modify exports but return value?
-* loader plugin
-*
+## Tests
+
+To run the tests, cd to **tests** and run:
+
+    node all.js
