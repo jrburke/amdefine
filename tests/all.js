@@ -27,7 +27,10 @@ load('doh/_' + env + 'Runner.js');
 
 require("./basic/basic-tests");
 require("./plugins/relative/relative-tests");
+
+//Cannot handle load.fromText for plugins yet, so commented out.
 //require("./plugins/coffeescript/coffeescript-tests");
+
 require("./require/require-tests");
 
 //Print out the final report

@@ -1,3 +1,8 @@
+/** vim: et:ts=4:sw=4:sts=4
+ * @license amdefine 0.0.1 Copyright (c) 2011, The Dojo Foundation All Rights Reserved.
+ * Available via the MIT or new BSD license.
+ * see: http://github.com/jrburke/amdefine for details
+ */
 
 /*jslint strict: false, nomen: false, plusplus: false */
 /*global module, process, require: true */
@@ -22,10 +27,31 @@ function normalize(name, baseName) {
     return path.normalize(path.join(baseName, name));
 }
 
+/**
+ * Create the normalize() function passed to a loader plugin's
+ * normalize method.
+ */
 function makeNormalize(relName) {
     return function (name) {
         return normalize(name, relName);
     };
+}
+
+function makeLoad(id) {
+    function load(value) {
+        loaderCache[id] = value;
+    }
+
+    load.fromText = function (id, text) {
+        //This one is difficult because the text can/probably uses
+        //define, and any relative paths and requires should be relative
+        //to that id was it would be found on disk. But this would require
+        //bootstrapping a module/require fairly deeply from node core.
+        //Not sure how best to go about that yet.
+        throw new Error('amdefine does not implement load.fromText');
+    };
+
+    return load;
 }
 
 function stringRequire(module, id) {
@@ -63,9 +89,7 @@ function stringRequire(module, id) {
         if (loaderCache[id]) {
             return loaderCache[id];
         } else {
-            plugin.load(id, makeRequire(module), function (value) {
-                loaderCache[id] = value;
-            }, {});
+            plugin.load(id, makeRequire(module), makeLoad(id), {});
 
             return loaderCache[id];
         }
