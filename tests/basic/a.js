@@ -1,5 +1,5 @@
 
-if (typeof define !== 'function') { var define = (require('../../amdefine'))(module); }
+if (typeof define !== 'function') { var define = require('../../amdefine')(module) }
 
 define(['./b', './sub/nested/d'], function (b, d) {
     return {

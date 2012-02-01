@@ -19,7 +19,7 @@ Then run `npm install` to get amdefine into your project.
 **2)** At the top of each module that uses define(), place this code:
 
 ```javascript
-    if (typeof define !== 'function') { var define = (require('amdefine'))(module); }
+    if (typeof define !== 'function') { var define = require('amdefine')(module) }
 ```
 
 **Only use this snippet** for loading amdefine. If you preserve the basic structure,
