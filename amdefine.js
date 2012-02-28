@@ -4,16 +4,13 @@
  * see: http://github.com/jrburke/amdefine for details
  */
 
-/*jslint strict: false, nomen: false, plusplus: false */
-/*global module, process, require: true */
+/*jslint node: true */
+/*global module, process */
+'use strict';
 
 var path = require('path'),
     loaderCache = {},
     makeRequire;
-
-// Null out require for this file so that it is not accidentally used
-// below, where module.require should be used instead.
-require = null;
 
 /**
  * Given a relative module name, like ./something, normalize it to
@@ -54,7 +51,7 @@ function makeLoad(id) {
     return load;
 }
 
-function stringRequire(module, id) {
+function stringRequire(module, require, id) {
     //Split the ID by a ! so that
     var index = id.indexOf('!'),
         relId = path.dirname(module.filename),
@@ -64,20 +61,20 @@ function stringRequire(module, id) {
         //Straight module lookup. If it is one of the special dependencies,
         //deal with it, otherwise, delegate to node.
         if (id === 'require') {
-            return makeRequire(module);
+            return makeRequire(module, require);
         } else if (id === 'exports') {
             return module.exports;
         } else if (id === 'module') {
             return module;
         } else {
-            return module.require(id);
+            return require(id);
         }
     } else {
         //There is a plugin in play.
         prefix = id.substring(0, index);
         id = id.substring(index + 1, id.length);
 
-        plugin = module.require(prefix);
+        plugin = require(prefix);
 
         if (plugin.normalize) {
             id = plugin.normalize(id, makeNormalize(relId));
@@ -89,24 +86,24 @@ function stringRequire(module, id) {
         if (loaderCache[id]) {
             return loaderCache[id];
         } else {
-            plugin.load(id, makeRequire(module), makeLoad(id), {});
+            plugin.load(id, makeRequire(module, require), makeLoad(id), {});
 
             return loaderCache[id];
         }
     }
 }
 
-makeRequire = function (module) {
+makeRequire = function (module, require) {
     function amdRequire(deps, callback) {
         if (typeof deps === 'string') {
             //Synchronous, single module require('')
-            return stringRequire(module, deps);
+            return stringRequire(module, require, deps);
         } else {
             //Array of dependencies with a callback.
 
             //Convert the dependencies to modules.
             deps = deps.map(function (depName) {
-                return stringRequire(module, depName);
+                return stringRequire(module, require, depName);
             });
 
             //Wait for next tick to call back the require call.
@@ -130,8 +127,23 @@ makeRequire = function (module) {
     return amdRequire;
 };
 
-function amdefine(module) {
+/**
+ * Creates a define for node.
+ * @param {Object} module the "module" object that is defined by Node for the
+ * current module.
+ * @param {Function} [require]. Node's require function for the current module.
+ * It only needs to be passed in Node versions before 0.5, when module.require
+ * did not exist.
+ * @returns {Function} a define function that is usable for the current node
+ * module.
+ */
+function amdefine(module, require) {
     var alreadyCalled = false;
+
+    //Favor explicit value, passed in if the module wants to support Node 0.4.
+    require = require || function req() {
+        return module.require.apply(module, arguments);
+    };
 
     //Create a define function specific to the module asking for amdefine.
     function define() {
@@ -160,11 +172,11 @@ function amdefine(module) {
         //to convert them to dependency values.
         if (deps) {
             deps = deps.map(function (depName) {
-                return stringRequire(module, depName);
+                return stringRequire(module, require, depName);
             });
         } else if (isFactoryFunction) {
             //Pass in the standard require, exports, module
-            deps = [makeRequire(module), module.exports, module];
+            deps = [makeRequire(module, require), module.exports, module];
         }
 
         if (!isFactoryFunction) {

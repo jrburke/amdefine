@@ -10,7 +10,7 @@ requiring those other programs to use AMD.
 
 ```javascript
     "dependencies": {
-        "amdefine": ">=0.0.1"
+        "amdefine": ">=0.0.2"
     }
 ```
 
@@ -22,6 +22,13 @@ Then run `npm install` to get amdefine into your project.
     if (typeof define !== 'function') { var define = require('amdefine')(module) }
 ```
 
+If you want to support Node 0.4, then add `require` as the second parameter to amdefine:
+
+```javascript
+    //Only if you want Node 0.4. If using 0.5 or later, use the above snippet.
+    if (typeof define !== 'function') { var define = require('amdefine')(module, require) }
+```
+
 **Only use this snippet** for loading amdefine. If you preserve the basic structure,
 with the braces, it will be stripped out when using the [RequireJS optimizer](#optimizer).
 
@@ -31,7 +38,7 @@ keep the rest of the structure to get the stripping behavior.
 If you want to deliver amdefine.js with your code but not use the npm/node_modules-installed
 option, then just download the latest release and refer to it using a relative path:
 
-[Version 0.0.1](https://github.com/jrburke/amdefine/raw/0.0.1/amdefine.js)
+[Version 0.0.2](https://github.com/jrburke/amdefine/raw/0.0.2/amdefine.js)
 
 ## define() usage
 
