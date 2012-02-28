@@ -29,7 +29,7 @@ If you want to support Node 0.4, then add `require` as the second parameter to a
     if (typeof define !== 'function') { var define = require('amdefine')(module, require) }
 ```
 
-**Only use this snippet** for loading amdefine. If you preserve the basic structure,
+**Only use these snippets** for loading amdefine. If you preserve the basic structure,
 with the braces, it will be stripped out when using the [RequireJS optimizer](#optimizer).
 
 You can add spaces, line breaks and even require amdefine with a local path, but
