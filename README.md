@@ -22,7 +22,7 @@ Then run `npm install` to get amdefine into your project.
 if (typeof define !== 'function') { var define = require('amdefine')(module) }
 ```
 
-**Only use these snippets** for loading amdefine. If you preserve the basic structure,
+**Only use these snippets** when loading amdefine. If you preserve the basic structure,
 with the braces, it will be stripped out when using the [RequireJS optimizer](#optimizer).
 
 You can add spaces, line breaks and even require amdefine with a local path, but
