@@ -19,14 +19,14 @@ Then run `npm install` to get amdefine into your project.
 **2)** At the top of each module that uses define(), place this code:
 
 ```javascript
-    if (typeof define !== 'function') { var define = require('amdefine')(module) }
+if (typeof define !== 'function') { var define = require('amdefine')(module) }
 ```
 
 If you want to support Node 0.4, then add `require` as the second parameter to amdefine:
 
 ```javascript
-    //Only if you want Node 0.4. If using 0.5 or later, use the above snippet.
-    if (typeof define !== 'function') { var define = require('amdefine')(module, require) }
+//Only if you want Node 0.4. If using 0.5 or later, use the above snippet.
+if (typeof define !== 'function') { var define = require('amdefine')(module, require) }
 ```
 
 **Only use these snippets** for loading amdefine. If you preserve the basic structure,
@@ -45,17 +45,17 @@ option, then just download the latest release and refer to it using a relative p
 It is best if you use the anonymous forms of define() in your module:
 
 ```javascript
-    define(function (require) {
-        var dependency = require('dependency');
-    });
+define(function (require) {
+    var dependency = require('dependency');
+});
 ```
 
 or
 
 ```javascript
-    define(['dependency'], function (dependency) {
+define(['dependency'], function (dependency) {
 
-    });
+});
 ```
 
 ## RequireJS optimizer integration. <a name="optimizer"></name>
@@ -78,12 +78,12 @@ The exception: calling AMD's callback-style require() from inside a factory
 function. The require callback is called on process.nextTick():
 
 ```javascript
-    define(function (require) {
-        require(['a'], function(a) {
-            //'a' is loaded synchronously, but
-            //this callback is called on process.nextTick().
-        });
+define(function (require) {
+    require(['a'], function(a) {
+        //'a' is loaded synchronously, but
+        //this callback is called on process.nextTick().
     });
+});
 ```
 
 ### Loader Plugins
@@ -102,7 +102,9 @@ to get an idea of the issues involved.
 
 To run the tests, cd to **tests** and run:
 
-    node all.js
+```
+node all.js
+```
 
 ## License
 
