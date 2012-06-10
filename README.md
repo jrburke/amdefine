@@ -28,6 +28,12 @@ with the braces, it will be stripped out when using the [RequireJS optimizer](#o
 You can add spaces, line breaks and even require amdefine with a local path, but
 keep the rest of the structure to get the stripping behavior.
 
+As you may know, because `if` statements in JavaScript don't have their own scope, the var
+declaration in the above snippet is made whether the `if` expression is truthy or not. If
+RequireJS is loaded then the declaration is superfluous because `define` is already already
+declared in the same scope in RequireJS. Fortunately JavaScript handles multiple `var`
+declarations of the same variable in the same scope gracefully.
+
 If you want to deliver amdefine.js with your code but not use the npm/node_modules-installed
 option, then just download the latest release and refer to it using a relative path:
 
