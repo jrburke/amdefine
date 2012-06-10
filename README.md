@@ -22,13 +22,6 @@ Then run `npm install` to get amdefine into your project.
 if (typeof define !== 'function') { var define = require('amdefine')(module) }
 ```
 
-If you want to support Node 0.4, then add `require` as the second parameter to amdefine:
-
-```javascript
-//Only if you want Node 0.4. If using 0.5 or later, use the above snippet.
-if (typeof define !== 'function') { var define = require('amdefine')(module, require) }
-```
-
 **Only use these snippets** for loading amdefine. If you preserve the basic structure,
 with the braces, it will be stripped out when using the [RequireJS optimizer](#optimizer).
 
@@ -65,6 +58,15 @@ will have support for stripping the `if (typeof define !== 'function')` check
 mentioned above, so you can include this snippet for code that runs in the
 browser, but avoid taking the cost of the if() statement once the code is
 optimized for deployment.
+
+## Node 0.4 Support
+
+If you want to support Node 0.4, then add `require` as the second parameter to amdefine:
+
+```javascript
+//Only if you want Node 0.4. If using 0.5 or later, use the above snippet.
+if (typeof define !== 'function') { var define = require('amdefine')(module, require) }
+```
 
 ## Limitations
 
