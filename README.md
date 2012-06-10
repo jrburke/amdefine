@@ -34,8 +34,8 @@ RequireJS is loaded then the declaration is superfluous because `define` is alre
 declared in the same scope in RequireJS. Fortunately JavaScript handles multiple `var`
 declarations of the same variable in the same scope gracefully.
 
-If you want to deliver amdefine.js with your code but not use the npm/node_modules-installed
-option, then just download the latest release and refer to it using a relative path:
+If you want to deliver amdefine.js with your code rather than specifying it as a dependency
+with npm, then just download the latest release and refer to it using a relative path:
 
 [Version 0.0.2](https://github.com/jrburke/amdefine/raw/0.0.2/amdefine.js)
 
