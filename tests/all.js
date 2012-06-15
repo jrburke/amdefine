@@ -26,6 +26,8 @@ load("doh/runner.js");
 load('doh/_' + env + 'Runner.js');
 
 require("./basic/basic-tests");
+require("./named/named-tests");
+
 require("./plugins/relative/relative-tests");
 
 //Cannot handle load.fromText for plugins yet, so commented out.
