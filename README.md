@@ -19,24 +19,23 @@ Then run `npm install` to get amdefine into your project.
 **2)** At the top of each module that uses define(), place this code:
 
 ```javascript
-    if (typeof define !== 'function') { var define = require('amdefine')(module) }
+if (typeof define !== 'function') { var define = require('amdefine')(module) }
 ```
 
-If you want to support Node 0.4, then add `require` as the second parameter to amdefine:
-
-```javascript
-    //Only if you want Node 0.4. If using 0.5 or later, use the above snippet.
-    if (typeof define !== 'function') { var define = require('amdefine')(module, require) }
-```
-
-**Only use these snippets** for loading amdefine. If you preserve the basic structure,
+**Only use these snippets** when loading amdefine. If you preserve the basic structure,
 with the braces, it will be stripped out when using the [RequireJS optimizer](#optimizer).
 
 You can add spaces, line breaks and even require amdefine with a local path, but
 keep the rest of the structure to get the stripping behavior.
 
-If you want to deliver amdefine.js with your code but not use the npm/node_modules-installed
-option, then just download the latest release and refer to it using a relative path:
+As you may know, because `if` statements in JavaScript don't have their own scope, the var
+declaration in the above snippet is made whether the `if` expression is truthy or not. If
+RequireJS is loaded then the declaration is superfluous because `define` is already already
+declared in the same scope in RequireJS. Fortunately JavaScript handles multiple `var`
+declarations of the same variable in the same scope gracefully.
+
+If you want to deliver amdefine.js with your code rather than specifying it as a dependency
+with npm, then just download the latest release and refer to it using a relative path:
 
 [Version 0.0.2](https://github.com/jrburke/amdefine/raw/0.0.2/amdefine.js)
 
@@ -45,17 +44,17 @@ option, then just download the latest release and refer to it using a relative p
 It is best if you use the anonymous forms of define() in your module:
 
 ```javascript
-    define(function (require) {
-        var dependency = require('dependency');
-    });
+define(function (require) {
+    var dependency = require('dependency');
+});
 ```
 
 or
 
 ```javascript
-    define(['dependency'], function (dependency) {
+define(['dependency'], function (dependency) {
 
-    });
+});
 ```
 
 ## RequireJS optimizer integration. <a name="optimizer"></name>
@@ -65,6 +64,15 @@ will have support for stripping the `if (typeof define !== 'function')` check
 mentioned above, so you can include this snippet for code that runs in the
 browser, but avoid taking the cost of the if() statement once the code is
 optimized for deployment.
+
+## Node 0.4 Support
+
+If you want to support Node 0.4, then add `require` as the second parameter to amdefine:
+
+```javascript
+//Only if you want Node 0.4. If using 0.5 or later, use the above snippet.
+if (typeof define !== 'function') { var define = require('amdefine')(module, require) }
+```
 
 ## Limitations
 
@@ -78,12 +86,12 @@ The exception: calling AMD's callback-style require() from inside a factory
 function. The require callback is called on process.nextTick():
 
 ```javascript
-    define(function (require) {
-        require(['a'], function(a) {
-            //'a' is loaded synchronously, but
-            //this callback is called on process.nextTick().
-        });
+define(function (require) {
+    require(['a'], function(a) {
+        //'a' is loaded synchronously, but
+        //this callback is called on process.nextTick().
     });
+});
 ```
 
 ### Loader Plugins
@@ -102,7 +110,9 @@ to get an idea of the issues involved.
 
 To run the tests, cd to **tests** and run:
 
-    node all.js
+```
+node all.js
+```
 
 ## License
 
