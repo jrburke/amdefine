@@ -1,7 +1,7 @@
 {
     "name": "amdefine",
     "description": "Provide AMD's define() API for declaring modules in the AMD format",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "homepage": "http://github.com/jrburke/amdefine.js",
     "author": "James Burke <jrburke@gmail.com> (http://github.com/jrburke)",
     "licenses": [
