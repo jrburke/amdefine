@@ -152,7 +152,7 @@ function amdefine(module, require) {
                 uri: __filename,
                 exports: e
             };
-            r = makeRequire(undefined, e, m, id);
+            r = makeRequire(require, e, m, id);
         } else {
             //Only support one define call per file
             if (alreadyCalled) {

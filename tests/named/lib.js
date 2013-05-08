@@ -2,12 +2,16 @@ if (typeof define !== 'function') { var define = require('../../amdefine')(modul
 
 define('sub/nested/d', function (require, exports, module) {
     var c = require('../c'),
-        e = require('./e');
+        e = require('./e'),
+        // if sub/nested/other is not defined, look for a file called
+        // other.js in the current directory
+        other = require('./other');
 
     return {
         name: 'd',
         e: e,
-        cName: c.name
+        cName: c.name,
+        otherName: other.name
     };
 });
 
