@@ -5,13 +5,15 @@ define('sub/nested/d', function (require, exports, module) {
         e = require('./e'),
         // if sub/nested/other is not defined, look for a file called
         // other.js in the current directory
-        other = require('./other');
+        other = require('./other'),
+        exported = require('./exported');
 
     return {
         name: 'd',
         e: e,
         cName: c.name,
-        otherName: other.name
+        otherName: other.name,
+        exportedName: exported.name
     };
 });
 

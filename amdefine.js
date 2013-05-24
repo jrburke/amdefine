@@ -291,6 +291,14 @@ function amdefine(module, require) {
         }
     };
 
+    // define.export combines define and define.require. Useful for files which 
+    // have only one AMD module define and which should export it to node right 
+    // away.
+    define.export = function (id, deps, factory) {
+        define(id, deps, factory);
+        module.exports = define.require(id);
+    };
+
     define.amd = {};
 
     return define;

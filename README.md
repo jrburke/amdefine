@@ -57,6 +57,64 @@ define(['dependency'], function (dependency) {
 });
 ```
 
+You can also define multiple modules in a single file by giving them unique 
+names:
+
+```javascript
+define('bar', function (require) {
+  return "Bar";
+});
+define('foo', function (require) {
+    var bar = require('bar');
+});
+```
+
+Named modules aren't run immediately; instead the function is stored in 
+amdefine's cache and run only when you explicitly `require()` it.  See 
+`define.require()` below for more information about this.
+
+
+## define.require() and named modules
+
+`define()` stores the module function, which is only called when you 
+`require()` the module in the same file.  If you want to require a module 
+defined in another file, you need to make sure the other file exports it.
+
+You can use `define.require()` to assign the exported value of a named module 
+to `module.exports` of the current file.
+
+```javascript
+if (typeof define !== 'function') { 
+  var define = require('amdefine')(module);
+}
+define('foo', function (require, exports, module) {
+  return "Foo";
+});
+module.exports = define.require('foo');
+```
+
+`module.exports` is only defined in node, so you'll need a guard around 
+`define.require()` if you run in browser.
+
+```javascript
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = define.require('l20n');
+}
+```
+
+Alternatively, if your file defines only one named module, you can define *and* 
+export it at once by using `define.export()`:
+
+```javascript
+if (typeof define !== 'function') { 
+  var define = require('amdefine')(module).export;
+}
+define('foo', function (require, exports, module) {
+  return "Foo";
+});
+```
+
+
 ## RequireJS optimizer integration. <a name="optimizer"></name>
 
 Version 1.0.3 of the [RequireJS optimizer](http://requirejs.org/docs/optimization.html)
