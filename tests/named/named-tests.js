@@ -9,6 +9,8 @@ doh.register(
             t.is('d', lib.d.name);
             t.is('c', lib.d.cName);
             t.is('e', lib.d.e.name);
+            t.is('other', lib.d.otherName);
+            t.is('exported', lib.d.exportedName);
         }
     ]
 );
