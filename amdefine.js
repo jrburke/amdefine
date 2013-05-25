@@ -244,8 +244,8 @@ function amdefine(module, require) {
         }
     };
 
-    //Create a define function specific to the module asking for amdefine.
-    function define(id, deps, factory) {
+    // Parse arguments passed to define depending on their types
+    function parseArguments(id, deps, factory) {
         if (Array.isArray(id)) {
             factory = deps;
             deps = id;
@@ -264,15 +264,23 @@ function amdefine(module, require) {
             deps = ['require', 'exports', 'module'];
         }
 
+        return [id, deps, factory];
+    }
+
+    //Create a define function specific to the module asking for amdefine.
+    function define(id, deps, factory) {
+        var args = parseArguments(id, deps, factory);
+        id = args[0];
+
         //Set up properties for this module. If an ID, then use
         //internal cache. If no ID, then use the external variables
         //for this node module.
         if (id) {
             //Put the module in deep freeze until there is a
             //require call for it.
-            defineCache[id] = [id, deps, factory];
+            defineCache[id] = args;
         } else {
-            runFactory(id, deps, factory);
+            runFactory.apply(null, args);
         }
     }
 
@@ -292,11 +300,17 @@ function amdefine(module, require) {
     };
 
     // define.export combines define and define.require. Useful for files which 
-    // have only one AMD module define and which should export it to node right 
-    // away.
+    // have only one named AMD module define and which should export it to node 
+    // right away.
     define.export = function (id, deps, factory) {
-        define(id, deps, factory);
-        module.exports = define.require(id);
+        var args = parseArguments(id, deps, factory);
+        runFactory.apply(null, args);
+        id = args[0];
+        // unnamed defines are automatically exported to module.exports;  named 
+        // ones need to be exported explicitly here
+        if (id) {
+            module.exports = loaderCache[id];
+        }
     };
 
     define.amd = {};

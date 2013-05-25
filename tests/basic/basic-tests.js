@@ -9,6 +9,8 @@ doh.register(
             t.is('d', a.d.name);
             t.is('c', a.d.cName);
             t.is('e', a.d.e.name);
+            t.is('exportA', a.exportA.name);
+            t.is('exportB', a.exportB.name);
         }
     ]
 );
