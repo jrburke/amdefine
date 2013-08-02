@@ -178,7 +178,7 @@ function amdefine(module, require) {
 
         //Call the factory with the right dependencies.
         if (typeof factory === 'function') {
-            result = factory.apply(module.exports, deps);
+            result = factory.apply(m.exports, deps);
         } else {
             result = factory;
         }
