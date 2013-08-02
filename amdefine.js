@@ -8,8 +8,6 @@
 /*global module, process */
 'use strict';
 
-var path = require('path');
-
 /**
  * Creates a define for node.
  * @param {Object} module the "module" object that is defined by Node for the
@@ -21,9 +19,11 @@ var path = require('path');
  * module.
  */
 function amdefine(module, require) {
+    'use strict';
     var defineCache = {},
         loaderCache = {},
         alreadyCalled = false,
+        path = require('path'),
         makeRequire, stringRequire;
 
     /**
