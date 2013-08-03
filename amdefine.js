@@ -12,13 +12,13 @@
  * Creates a define for node.
  * @param {Object} module the "module" object that is defined by Node for the
  * current module.
- * @param {Function} [require]. Node's require function for the current module.
+ * @param {Function} [requireFn]. Node's require function for the current module.
  * It only needs to be passed in Node versions before 0.5, when module.require
  * did not exist.
  * @returns {Function} a define function that is usable for the current node
  * module.
  */
-function amdefine(module, require) {
+function amdefine(module, requireFn) {
     'use strict';
     var defineCache = {},
         loaderCache = {},
@@ -138,7 +138,7 @@ function amdefine(module, require) {
     };
 
     //Favor explicit value, passed in if the module wants to support Node 0.4.
-    require = require || function req() {
+    requireFn = requireFn || function req() {
         return module.require.apply(module, arguments);
     };
 
@@ -152,7 +152,7 @@ function amdefine(module, require) {
                 uri: __filename,
                 exports: e
             };
-            r = makeRequire(require, e, m, id);
+            r = makeRequire(requireFn, e, m, id);
         } else {
             //Only support one define call per file
             if (alreadyCalled) {
@@ -165,7 +165,7 @@ function amdefine(module, require) {
             //the exports in here is amdefine exports.
             e = module.exports;
             m = module;
-            r = makeRequire(require, e, m, module.id);
+            r = makeRequire(requireFn, e, m, module.id);
         }
 
         //If there are dependencies, they are strings, so need
