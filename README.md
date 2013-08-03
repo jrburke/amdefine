@@ -10,7 +10,7 @@ requiring those other programs to use AMD.
 
 ```javascript
     "dependencies": {
-        "amdefine": ">=0.0.7"
+        "amdefine": ">=0.0.8"
     }
 ```
 
