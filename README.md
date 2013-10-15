@@ -41,8 +41,10 @@ with npm, then just download the latest release and refer to it using a relative
 
 ### amdefine/intercept
 
+Consider this very experimental.
+
 Instead of pasting the piece of text for the amdefine setup of a `define`
-variable in each module you create or cosunme, you can use `amdefine/intercept`
+variable in each module you create or consume, you can use `amdefine/intercept`
 instead. It will automatically insert the above snippet in each .js file loaded
 by Node.
 
