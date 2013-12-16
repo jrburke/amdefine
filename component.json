@@ -1,0 +1,9 @@
+{
+    "name": "amdefine",
+    "repo": "jrburke/amdefine",
+    "version": "0.1.0",
+    "main": "amdefine.js",
+    "scripts": [
+        "amdefine.js"
+    ]
+}
