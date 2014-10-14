@@ -18,9 +18,22 @@ function stripBOM(content) {
     return content;
 }
 
+var rInterpreter = /^#!.+[\n\r]*/;
+
+// Strip interpreter headers by allex.
+function stripInterpreter(content) {
+    content = content.trim();
+    if (content.charCodeAt(0) === 0x23) {
+        content = content.replace(rInterpreter, '');
+    }
+    return content;
+}
+
 //Also adapted from the node/lib/module.js source:
 function intercept(module, filename) {
     var content = stripBOM(fs.readFileSync(filename, 'utf8'));
+
+    content = stripInterpreter(content);
 
     if (!amdefineRegExp.test(module.id)) {
         content = inserted + content;
